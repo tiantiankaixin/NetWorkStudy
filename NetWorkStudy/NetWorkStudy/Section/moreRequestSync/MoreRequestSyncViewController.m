@@ -22,10 +22,11 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     [self setTitle:@"多个网络请求的同步问题"];
-     [self loadRequest1];
+    [self loadRequest1];
     // Do any additional setup after loading the view from its nib.
 }
 
+#pragma mark - 直接使用dispatch_group
 - (void)loadRequest
 {
     //网络请求是异步的 发起后group就认为任务已经完成 所以直接使用group不能达到同步的效果
@@ -61,6 +62,7 @@
     });
 }
 
+#pragma mark - dispatch_group_enter、dispatch_group_leave、dispatch_group_notify实现同步
 - (void)loadRequest1
 {
     dispatch_group_t dispatchGroup = dispatch_group_create();//是由系统持有管理的  与self的生命周期无关
@@ -75,10 +77,10 @@
     dispatch_group_enter(dispatchGroup);
     [MALAFNManger getDataWithUrl:Url2 parameters:nil finish:^(RequestResult *result) {
         
-        NSLog(@"第二个请求完成");
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             
             sleep(10);//网络请求结束后回调是在主线程如果sleep放在外面会阻塞主线程
+            NSLog(@"第二个请求完成");
             dispatch_group_leave(dispatchGroup);
         });
         
@@ -90,9 +92,45 @@
     });
 }
 
+#pragma mark - dispatch_group_enter、dispatch_group_leave、dispatch_group_wait实现同步
+- (void)loadRequest2
+{
+    dispatch_group_t dispatchGroup = dispatch_group_create();//是由系统持有管理的  与self的生命周期无关
+    dispatch_group_enter(dispatchGroup);
+    [MALAFNManger getDataWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
+        
+        NSLog(@"第一个请求完成");
+        dispatch_group_leave(dispatchGroup);
+        
+    } des:@"第一个url"];
+    
+    dispatch_group_enter(dispatchGroup);
+    [MALAFNManger getDataWithUrl:Url2 parameters:nil finish:^(RequestResult *result) {
+        
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            
+            sleep(10);//网络请求结束后回调是在主线程如果sleep放在外面会阻塞主线程
+            NSLog(@"第二个请求完成");
+            dispatch_group_leave(dispatchGroup);
+        });
+        
+    } des:@"第二个url"];
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        
+        dispatch_group_wait(dispatchGroup, dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC));
+        NSLog(@"完成");
+    });
+}
+
 - (void)dealloc
 {
     NSLog(@"%@ dealloc",NSStringFromClass([self class]));
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    NSLog(@"页面可以被点击");
 }
 
 - (void)didReceiveMemoryWarning
