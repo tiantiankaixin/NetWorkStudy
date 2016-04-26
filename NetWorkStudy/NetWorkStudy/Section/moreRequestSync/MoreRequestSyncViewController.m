@@ -42,8 +42,7 @@
             }
             
         } des:@"第一个url"];
-        NSLog(@"1 currentThread：%@",[NSThread currentThread]);
-        
+       
     });
     dispatch_group_async(dispatchGroup, dispatchQueue, ^(){
         [MALAFNManger getDataWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
@@ -54,7 +53,6 @@
             }
             
         } des:@"第二个url"];
-        NSLog(@"2 currentThread：%@",[NSThread currentThread]);
     });
     
     dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(), ^(){
