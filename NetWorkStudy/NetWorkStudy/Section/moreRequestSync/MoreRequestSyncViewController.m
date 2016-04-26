@@ -30,7 +30,7 @@
 - (void)loadRequest
 {
     //网络请求是异步的 发起后group就认为任务已经完成 所以直接使用group不能达到同步的效果
-    dispatch_queue_t dispatchQueue = dispatch_queue_create("ted.queue.next", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_queue_t dispatchQueue = dispatch_queue_create("com.shidaiyinuo.NetWorkStudy2", DISPATCH_QUEUE_CONCURRENT);
     dispatch_group_t dispatchGroup = dispatch_group_create();
     dispatch_group_async(dispatchGroup, dispatchQueue, ^(){
         
@@ -56,14 +56,14 @@
     });
     
     dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(), ^(){
-        NSLog(@"请求完成 currentThread：%@",[NSThread currentThread]);
+        NSLog(@"dispatch_group_notify block执行");
     });
 }
 
 #pragma mark - dispatch_group_enter、dispatch_group_leave、dispatch_group_notify实现同步
 - (void)loadRequest1
 {
-    dispatch_group_t dispatchGroup = dispatch_group_create();//是由系统持有管理的  与self的生命周期无关
+    dispatch_group_t dispatchGroup = dispatch_group_create();
     dispatch_group_enter(dispatchGroup);
     [MALAFNManger getDataWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
         
@@ -116,7 +116,7 @@
     
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         
-        dispatch_group_wait(dispatchGroup, dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC));
+        dispatch_group_wait(dispatchGroup, dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC));//是同步的所以不要放在主线程
         NSLog(@"完成");
     });
 }
