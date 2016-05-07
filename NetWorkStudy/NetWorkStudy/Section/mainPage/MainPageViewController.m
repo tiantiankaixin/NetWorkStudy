@@ -21,7 +21,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     [self setTitle:@"网络请求学习"];
     [self addARowWithCellTitle:@"多个网络请求的同步问题" vcClass:[MoreRequestSyncViewController class] turnType:M_push];
-    [self groupSync];
+    [self groupSync2];
     // Do any additional setup after loading the view.
 }
 
@@ -48,6 +48,33 @@
     });
 }
 
+- (void)groupSync2
+{
+    dispatch_queue_t dispatchQueue = dispatch_queue_create("com.shidaiyinuo.NetWorkStudy1", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_queue_t globalQueue = dispatch_get_global_queue(0, 0);
+    dispatch_group_t dispatchGroup = dispatch_group_create();
+    dispatch_group_async(dispatchGroup, dispatchQueue, ^(){
+        
+        dispatch_async(globalQueue, ^{
+           
+            sleep(3);
+            NSLog(@"任务一完成");
+        });
+
+    });
+    dispatch_group_async(dispatchGroup, dispatchQueue, ^(){
+        
+        dispatch_async(globalQueue, ^{
+            
+            sleep(2);
+            NSLog(@"任务二完成");
+        });
+        
+    });
+    dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(), ^(){
+        NSLog(@"dispatch_group_notify 被执行了");
+    });
+}
 
 - (void)didReceiveMemoryWarning
 {
