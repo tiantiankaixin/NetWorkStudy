@@ -11,11 +11,13 @@
 @interface RequestResult : NSObject
 
 @property (nonatomic, assign) NSInteger errorCode;
-@property (nonatomic, copy) NSString *errorDes;
+@property (nonatomic, copy)   NSString *errorDes;
 @property (nonatomic, assign) BOOL isSuccess;
 @property (nonatomic, strong) id requestData;
-@property (nonatomic, copy) NSString *requestStr;
+@property (nonatomic, copy)   NSString *requestStr;
 
++ (RequestResult *)resultWithData:(NSData *)data;
 + (RequestResult *)requestWithError:(NSError *)error;
++ (NSString *)errorDesWithError:(NSError *)error;
 
 @end

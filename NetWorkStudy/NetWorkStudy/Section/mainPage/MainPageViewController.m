@@ -8,6 +8,7 @@
 
 #import "MainPageViewController.h"
 #import "MoreRequestSyncViewController.h"
+#import "RequestCancerViewController.h"
 
 @interface MainPageViewController ()
 
@@ -21,7 +22,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     [self setTitle:@"网络请求学习"];
     [self addARowWithCellTitle:@"多个网络请求的同步问题" vcClass:[MoreRequestSyncViewController class] turnType:M_push];
-    [self groupSync2];
+    [self addARowWithCellTitle:@"请求取消" vcClass:[RequestCancerViewController class] turnType:M_push];
     // Do any additional setup after loading the view.
 }
 
@@ -73,6 +74,36 @@
     });
     dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(), ^(){
         NSLog(@"dispatch_group_notify 被执行了");
+    });
+}
+
+#pragma mark - 等任务1执行完再执行任务2
+- (void)groupSync3
+{
+    __block dispatch_semaphore_t semap = dispatch_semaphore_create(0);
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        
+        sleep(5);
+        NSLog(@"我是任务一");
+        dispatch_semaphore_signal(semap);
+        semap = nil;
+    });
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        
+        if (dispatch_semaphore_wait(semap, dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC)))//超时返回非零
+        {
+            //处理超时  也可以把超时时间设置成forever；会一直等待直到收到信号
+        }
+        else//不超时返回0
+        {
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                
+                NSLog(@"我是任务二");
+            });
+        }
+
     });
 }
 

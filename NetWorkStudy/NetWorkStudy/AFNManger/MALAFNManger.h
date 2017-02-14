@@ -10,17 +10,13 @@
 #import "RequestResult.h"
 #import <AFNetworking.h>
 
-//序列化json data
-#define YNDic(jsonData) [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil]
-#define YNStr(data)  [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]
-
 typedef void(^FinishBlock)(RequestResult *result);
 
 @interface MALAFNManger : NSObject
 
-//  单例对象
-+ (MALAFNManger *)shareAFNManger;
++ (NSString *)getWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj;
++ (NSString *)postWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj;
 
-+ (void)getDataWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des;
++ (void)cancelRequestWithFlag:(NSString *)flag;
 
 @end

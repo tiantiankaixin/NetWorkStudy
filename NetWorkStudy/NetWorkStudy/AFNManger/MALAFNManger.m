@@ -8,116 +8,163 @@
 
 #import "MALAFNManger.h"
 
-#define AFNRequestTimeout  30
-#define AFNGeneralManager  [MALAFNManger shareAFNManger].generalSession
-#define AFNJsonManager     [MALAFNManger shareAFNManger].jsonSession
+#define AFNRequestTimeout  5
+#define AFNSessionManager  [self afnSessionManager]
+#define AFNTaskDic         [self taskDic]
 
-static MALAFNManger *manger = nil;
-
+static NSMutableDictionary *taskDic = nil;
+static AFHTTPSessionManager *afnManager = nil;
 
 @interface MALAFNManger()
-
-@property (nonatomic, strong) AFHTTPSessionManager *generalSession;
-@property (nonatomic, strong) AFHTTPSessionManager *jsonSession;
 
 @end
 
 @implementation MALAFNManger
 
-+ (instancetype)allocWithZone:(struct _NSZone *)zone
++ (AFHTTPSessionManager *)afnSessionManager
 {
-    if (manger == nil)
+    if (afnManager == nil)
     {
-        manger = [super allocWithZone:zone];
+        afnManager = [self sessionManagerWithTimeOut:AFNRequestTimeout isJson:NO];
     }
-    return manger;
+    return afnManager;
 }
 
-+ (MALAFNManger *)shareAFNManger
++ (AFHTTPSessionManager *)sessionManagerWithTimeOut:(NSTimeInterval)timeOut isJson:(BOOL)isJson
 {
-    if (manger == nil)
+    AFHTTPSessionManager *session = [AFHTTPSessionManager manager];
+    if (isJson)
     {
-        manger = [[super alloc] init];
-        [manger setTimeOut:AFNRequestTimeout];
+        session.responseSerializer = [AFJSONResponseSerializer serializer];
     }
-    return manger;
-}
-
-- (AFHTTPSessionManager *)generalSession
-{
-    if (_generalSession == nil)
+    else
     {
-        _generalSession = [AFHTTPSessionManager manager];
-        //NSURLSessionConfiguration
-        _generalSession.responseSerializer = [AFHTTPResponseSerializer serializer];
+        session.responseSerializer = [AFHTTPResponseSerializer serializer];
     }
-    return _generalSession;
+    [session.requestSerializer setTimeoutInterval:timeOut];
+    return session;
 }
 
-- (AFHTTPSessionManager *)jsonSession
+#pragma mark - get request
++ (NSString *)getWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj
 {
-    if (_jsonSession == nil)
-    {
-        _jsonSession = [AFHTTPSessionManager manager];
-        _jsonSession.responseSerializer = [AFJSONResponseSerializer serializer];
-    }
-    return _jsonSession;
-}
-
-#pragma mark - 设置请求超时时间
-- (void)setTimeOut:(NSTimeInterval)time
-{
-    [self.generalSession.requestSerializer setTimeoutInterval:time];
-    [self.jsonSession.requestSerializer setTimeoutInterval:time];
-}
-
-+ (void)getDataWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des
-{
-    //TODO: 这个地方 应该加入一个自定义的鉴定方法（判断请求是否成功）
-    [AFNGeneralManager GET:url parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
+    NSMutableDictionary *pa = [self addPublicParameters:parameters];
+    __weak typeof(lifeObj) wsObj = lifeObj;
+    BOOL uselifeObj = (lifeObj != nil);
+    NSURLSessionTask *task = [AFNSessionManager GET:url parameters:pa progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         
-        NSInteger total = downloadProgress.totalUnitCount;
-        NSInteger complate = downloadProgress.completedUnitCount;
-        float progress = complate / (total * 1.0);
-        NSLog(@"progress = %.2f",progress);
-        
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        
-        RequestResult *result = [[RequestResult alloc] init];
-        result.requestData = YNDic(responseObject);
-        result.requestStr = YNStr(responseObject);
-        result.isSuccess = YES;
-        [MALAFNManger logFullUrl:url andParameters:parameters outPut:result des:des];
-        finish(result);
+        [self requestSuccessWithData:responseObject Url:url parameters:parameters finish:finish des:des lifeObj:wsObj uselifeObj:uselifeObj];
         
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         
-        [MALAFNManger logFullUrl:url andParameters:parameters outPut:@"请求失败" des:des];
-        finish([RequestResult requestWithError:error]);
-        
+        [self requestErrorWithUrl:url parameters:parameters finish:finish des:des error:error lifeObj:wsObj uselifeObj:uselifeObj];
     }];
+    return [self saveTaskWithUrl:url pa:parameters task:task];
 }
 
-//  打印出请求链接全路径    <待修改>
-+ (NSString *)logFullUrl:(NSString *)urlString  andParameters:(NSDictionary *)pa outPut:(id)outPut des:(NSString *)des
++ (NSString *)postWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj
 {
-    NSMutableString *paString = [[NSMutableString alloc] init];
-    [paString appendString:[NSString stringWithFormat:@"%@",urlString]];
-    if (pa != nil)
+    NSMutableDictionary *pa = [self addPublicParameters:parameters];
+    __weak typeof(lifeObj) wsObj = lifeObj;
+    BOOL uselifeObj = (lifeObj != nil);
+    NSURLSessionTask *task = [AFNSessionManager POST:url parameters:pa progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        
+        [self requestSuccessWithData:responseObject Url:url parameters:parameters finish:finish des:des lifeObj:wsObj uselifeObj:uselifeObj];
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        
+        [self requestErrorWithUrl:url parameters:parameters finish:finish des:des error:error lifeObj:wsObj uselifeObj:uselifeObj];
+    }];
+    return [self saveTaskWithUrl:url pa:parameters task:task];
+}
+
+#pragma mark - 请求移除
++ (void)cancelRequestWithFlag:(NSString *)flag
+{
+    if (flag.length > 0)
     {
-        [paString appendString:@"&"];
+        NSURLSessionTask *task = [AFNTaskDic objectForKey:flag];
+        if (task)
+        {
+            NSURLSessionTaskState state = task.state;
+            if (state != NSURLSessionTaskStateCanceling && state != NSURLSessionTaskStateCompleted)
+            {
+                [task cancel];//cancel后 task会直接完成并抛出一个NSURl的error  NSURLErrorCancelled
+            }
+            [AFNTaskDic removeObjectForKey:flag];
+        }
     }
-    NSInteger paCount = pa.count;
-    __block NSInteger index = 0;
-    [pa enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop)
-     {
-         [paString appendFormat:@"%@=%@",key,obj];
-         index++;
-         if (index != paCount) {
-             
-             [paString appendString:@"&"];
-         }
-     }];
+}
+
++ (NSString *)saveTaskWithUrl:(NSString *)url pa:(NSDictionary *)pa task:(NSURLSessionTask *)task
+{
+    NSString *requestFlag = [self fullUrlWithHost:url pa:pa];
+    [self cancelRequestWithFlag:requestFlag];
+    if (task)
+    {
+        [AFNTaskDic setObject:task forKey:requestFlag];
+    }
+    return requestFlag;
+}
+
++ (NSMutableDictionary *)taskDic
+{
+    if(taskDic == nil)
+    {
+        taskDic = [NSMutableDictionary dictionary];
+    }
+    return taskDic;
+}
+
+#pragma mark - 请求结果处理
+//访问服务器成功处理
++ (void)requestSuccessWithData:(NSData *)responseObject Url:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj uselifeObj:(BOOL)uselifeObj
+{
+    NSString *requestFlag = [self fullUrlWithHost:url pa:parameters];
+    [self cancelRequestWithFlag:requestFlag];
+    if (uselifeObj && !lifeObj)
+    {
+        return;
+    }
+    RequestResult *result = [RequestResult resultWithData:responseObject];
+    if (finish)
+    {
+        finish(result);
+    }
+    [MALAFNManger logFullUrl:url andParameters:parameters outPut:@"" des:des];
+}
+//访问服务器失败处理
++ (void)requestErrorWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des error:(NSError *)error lifeObj:(id)lifeObj uselifeObj:(BOOL)uselifeObj
+{
+    NSString *requestFlag = [self fullUrlWithHost:url pa:parameters];
+    [self cancelRequestWithFlag:requestFlag];
+    if (uselifeObj && !lifeObj)
+    {
+        return;
+    }
+    if (error.code == NSURLErrorCancelled)
+    {
+        return;
+    }
+    [MALAFNManger logFullUrl:url andParameters:parameters outPut:[RequestResult errorDesWithError:error] des:des];
+    if(finish)
+    {
+        finish([RequestResult requestWithError:error]);
+    }
+}
+
+#pragma mark - help
+//添加公共参数
++ (NSMutableDictionary *)addPublicParameters:(NSDictionary *)pa
+{
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:pa];
+    
+    return dic;
+}
+//打印full url
++ (void)logFullUrl:(NSString *)urlString andParameters:(NSDictionary *)pa outPut:(id)outPut des:(NSString *)des
+{
+    NSString *fullUrl = [self fullUrlWithHost:urlString pa:pa];
     if ([outPut isKindOfClass:[RequestResult class]])
     {
         RequestResult *result = (RequestResult *)outPut;
@@ -127,9 +174,29 @@ static MALAFNManger *manger = nil;
             outPut = result.requestStr;
         }
     }
-//    YNLog(@"\n{\n\n 请求url : %@\n\n 接口描述 : %@\n\n 请求结果 : %@\n\n}\n",paString,des,outPut);
-   // NSLog(@"\n{\n\n 请求url : %@\n\n 接口描述 : %@\n\n}\n",paString,des);
-    return paString;
+    NSLog(@"\n{\n\n 请求url : %@\n\n 接口描述 : %@\n\n}\n",fullUrl,des);
+}
+//得到full url
++ (NSString *)fullUrlWithHost:(NSString *)host pa:(NSDictionary *)pa
+{
+    NSMutableString *fullUrl = [[NSMutableString alloc] init];
+    [fullUrl appendString:[NSString stringWithFormat:@"%@",host]];
+    if (pa != nil)
+    {
+        [fullUrl appendString:@"?"];
+    }
+    NSInteger paCount = pa.count;
+    __block NSInteger index = 0;
+    [pa enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop)
+     {
+         [fullUrl appendFormat:@"%@=%@",key,obj];
+         index++;
+         if (index != paCount) {
+             
+             [fullUrl appendString:@"&"];
+         }
+     }];
+    return fullUrl;
 }
 
 @end

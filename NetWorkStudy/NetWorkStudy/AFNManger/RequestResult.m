@@ -7,9 +7,11 @@
 //
 
 #import "RequestResult.h"
+//序列化json data
+#define YNDic(jsonData) [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil]
+#define YNStr(data)  [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]
 
 @implementation RequestResult
-
 
 + (RequestResult *)requestWithError:(NSError *)error
 {
@@ -20,27 +22,40 @@
         return result;
     }
     result.errorCode = error.code;
-    NSString *errorDes;
+    result.errorDes = [self errorDesWithError:error];
+    return result;
+}
+
++ (RequestResult *)resultWithData:(NSData *)data
+{
+    RequestResult *result = [[RequestResult alloc] init];
+    result.requestData = YNDic(data);
+    result.requestStr = YNStr(data);
+    result.isSuccess = YES;
+    return result;
+}
+
++ (NSString *)errorDesWithError:(NSError *)error
+{
+    NSString *errorDes = @"未知错误";
     switch (error.code)
     {
-        case -1001:
+        case NSURLErrorTimedOut:
         {
             errorDes = @"请求超时，请检查你的网络连接";
             break;
         }
-        case -1009:
+        case NSURLErrorNotConnectedToInternet:
         {
             errorDes = @"网络不给力";
             break;
         }
         default:
         {
-            errorDes = nil;
             break;
         }
     }
-    result.errorDes = errorDes;
-    return result;
+    return errorDes;
 }
 
 @end

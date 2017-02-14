@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		20DC787E1DFF919C00FB0441 /* AKNetPackegeAFN.m in Sources */ = {isa = PBXBuildFile; fileRef = 20DC787D1DFF919C00FB0441 /* AKNetPackegeAFN.m */; };
+		20E3C19D1DE7E2B40097DCFB /* RequestCancerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20E3C19C1DE7E2B40097DCFB /* RequestCancerViewController.m */; };
+		20E3C1A01DE814AE0097DCFB /* UIViewController+afn.m in Sources */ = {isa = PBXBuildFile; fileRef = 20E3C19F1DE814AE0097DCFB /* UIViewController+afn.m */; };
 		68739BFE1CC86264009C6840 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 68739BFD1CC86264009C6840 /* main.m */; };
 		68739C011CC86264009C6840 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 68739C001CC86264009C6840 /* AppDelegate.m */; };
 		68739C091CC86264009C6840 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68739C081CC86264009C6840 /* Assets.xcassets */; };
@@ -40,6 +43,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		20DC787C1DFF919C00FB0441 /* AKNetPackegeAFN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKNetPackegeAFN.h; sourceTree = "<group>"; };
+		20DC787D1DFF919C00FB0441 /* AKNetPackegeAFN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKNetPackegeAFN.m; sourceTree = "<group>"; };
+		20E3C19B1DE7E2B40097DCFB /* RequestCancerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RequestCancerViewController.h; sourceTree = "<group>"; };
+		20E3C19C1DE7E2B40097DCFB /* RequestCancerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RequestCancerViewController.m; sourceTree = "<group>"; };
+		20E3C19E1DE814AE0097DCFB /* UIViewController+afn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+afn.h"; sourceTree = "<group>"; };
+		20E3C19F1DE814AE0097DCFB /* UIViewController+afn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+afn.m"; sourceTree = "<group>"; };
 		68739BF91CC86264009C6840 /* NetWorkStudy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetWorkStudy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		68739BFD1CC86264009C6840 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		68739BFF1CC86264009C6840 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -97,6 +106,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		20DC787B1DFF919C00FB0441 /* AFNHttps自签名证书的封装 */ = {
+			isa = PBXGroup;
+			children = (
+				20DC787C1DFF919C00FB0441 /* AKNetPackegeAFN.h */,
+				20DC787D1DFF919C00FB0441 /* AKNetPackegeAFN.m */,
+			);
+			path = "AFNHttps自签名证书的封装";
+			sourceTree = "<group>";
+		};
+		20E3C19A1DE7E0400097DCFB /* requestCancer */ = {
+			isa = PBXGroup;
+			children = (
+				20E3C19B1DE7E2B40097DCFB /* RequestCancerViewController.h */,
+				20E3C19C1DE7E2B40097DCFB /* RequestCancerViewController.m */,
+			);
+			path = requestCancer;
+			sourceTree = "<group>";
+		};
 		3FCD3AE7B50200FD92B31AB7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -139,6 +166,7 @@
 		68739BFB1CC86264009C6840 /* NetWorkStudy */ = {
 			isa = PBXGroup;
 			children = (
+				20DC787B1DFF919C00FB0441 /* AFNHttps自签名证书的封装 */,
 				68739C3E1CC87C61009C6840 /* AFNManger */,
 				68739C2F1CC863C7009C6840 /* CustomTool */,
 				68739C371CC87394009C6840 /* Section */,
@@ -203,6 +231,7 @@
 			children = (
 				68739C461CC8B57E009C6840 /* mainPage */,
 				68739C381CC8780D009C6840 /* moreRequestSync */,
+				20E3C19A1DE7E0400097DCFB /* requestCancer */,
 			);
 			path = Section;
 			sourceTree = "<group>";
@@ -223,6 +252,8 @@
 				68739C401CC87C61009C6840 /* MALAFNManger.m */,
 				68739C411CC87C61009C6840 /* RequestResult.h */,
 				68739C421CC87C61009C6840 /* RequestResult.m */,
+				20E3C19E1DE814AE0097DCFB /* UIViewController+afn.h */,
+				20E3C19F1DE814AE0097DCFB /* UIViewController+afn.m */,
 			);
 			path = AFNManger;
 			sourceTree = "<group>";
@@ -419,9 +450,12 @@
 				68739C331CC863E4009C6840 /* MenuTemplateVC.m in Sources */,
 				68739C441CC87C61009C6840 /* RequestResult.m in Sources */,
 				68739C3C1CC87939009C6840 /* MoreRequestSyncViewController.m in Sources */,
+				20DC787E1DFF919C00FB0441 /* AKNetPackegeAFN.m in Sources */,
 				68739C011CC86264009C6840 /* AppDelegate.m in Sources */,
+				20E3C1A01DE814AE0097DCFB /* UIViewController+afn.m in Sources */,
 				68739C491CC8B5A6009C6840 /* MainPageViewController.m in Sources */,
 				68739C431CC87C61009C6840 /* MALAFNManger.m in Sources */,
+				20E3C19D1DE7E2B40097DCFB /* RequestCancerViewController.m in Sources */,
 				68739C361CC86531009C6840 /* MenuTemplateModel.m in Sources */,
 				68739BFE1CC86264009C6840 /* main.m in Sources */,
 			);

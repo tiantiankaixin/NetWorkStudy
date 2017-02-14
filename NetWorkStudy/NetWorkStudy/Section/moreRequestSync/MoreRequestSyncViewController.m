@@ -34,25 +34,25 @@
     dispatch_group_t dispatchGroup = dispatch_group_create();
     dispatch_group_async(dispatchGroup, dispatchQueue, ^(){
         
-        [MALAFNManger getDataWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
+        [MALAFNManger getWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
             
             if (result.isSuccess)
             {
                 NSLog(@"第一个请求完成");
             }
             
-        } des:@"第一个url"];
-       
+        } des:@"第一个url" lifeObj:self];
     });
     dispatch_group_async(dispatchGroup, dispatchQueue, ^(){
-        [MALAFNManger getDataWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
+        
+        [MALAFNManger getWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
             
             if (result.isSuccess)
             {
                 NSLog(@"第二个请求完成");
             }
             
-        } des:@"第二个url"];
+        } des:@"第二个url" lifeObj:self];
     });
     
     dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(), ^(){
@@ -65,15 +65,18 @@
 {
     dispatch_group_t dispatchGroup = dispatch_group_create();
     dispatch_group_enter(dispatchGroup);
-    [MALAFNManger getDataWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
+    [MALAFNManger getWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
         
-        NSLog(@"第一个请求完成");
+        if (result.isSuccess)
+        {
+            NSLog(@"第一个请求完成");
+        }
         dispatch_group_leave(dispatchGroup);
         
-    } des:@"第一个url"];
+    } des:@"第一个url" lifeObj:self];
     
     dispatch_group_enter(dispatchGroup);
-    [MALAFNManger getDataWithUrl:Url2 parameters:nil finish:^(RequestResult *result) {
+    [MALAFNManger getWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
         
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             
@@ -82,8 +85,8 @@
             dispatch_group_leave(dispatchGroup);
         });
         
-    } des:@"第二个url"];
-    
+    } des:@"第二个url" lifeObj:self];
+
     dispatch_group_notify(dispatchGroup, dispatch_get_main_queue(), ^(){
         
         NSLog(@"请求完成");
@@ -95,15 +98,18 @@
 {
     dispatch_group_t dispatchGroup = dispatch_group_create();//是由系统持有管理的  与self的生命周期无关
     dispatch_group_enter(dispatchGroup);
-    [MALAFNManger getDataWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
+    [MALAFNManger getWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
         
-        NSLog(@"第一个请求完成");
+        if (result.isSuccess)
+        {
+            NSLog(@"第一个请求完成");
+        }
         dispatch_group_leave(dispatchGroup);
         
-    } des:@"第一个url"];
+    } des:@"第一个url" lifeObj:self];
     
     dispatch_group_enter(dispatchGroup);
-    [MALAFNManger getDataWithUrl:Url2 parameters:nil finish:^(RequestResult *result) {
+    [MALAFNManger getWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
         
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             
@@ -112,7 +118,7 @@
             dispatch_group_leave(dispatchGroup);
         });
         
-    } des:@"第二个url"];
+    } des:@"第二个url" lifeObj:self];
     
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         
