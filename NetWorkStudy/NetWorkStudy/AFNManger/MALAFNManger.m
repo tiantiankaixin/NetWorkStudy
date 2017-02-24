@@ -99,7 +99,7 @@ static AFHTTPSessionManager *afnManager = nil;
 + (NSString *)saveTaskWithUrl:(NSString *)url pa:(NSDictionary *)pa task:(NSURLSessionTask *)task
 {
     NSString *requestFlag = [self fullUrlWithHost:url pa:pa];
-    [self cancelRequestWithFlag:requestFlag];
+    //[self cancelRequestWithFlag:requestFlag];
     if (task)
     {
         [AFNTaskDic setObject:task forKey:requestFlag];
