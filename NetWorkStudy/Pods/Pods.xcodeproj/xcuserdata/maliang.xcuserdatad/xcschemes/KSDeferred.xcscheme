@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'E835528AD5F6457DA995800C'
-               BlueprintName = 'AFNetworking'
+               BlueprintIdentifier = '66FE107B6B7393C4C94BAD4CF3D5DDCA'
+               BlueprintName = 'KSDeferred'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libAFNetworking.a'>
+               BuildableName = 'libKSDeferred.a'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

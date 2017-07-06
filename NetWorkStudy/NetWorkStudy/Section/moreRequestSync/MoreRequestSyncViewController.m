@@ -7,6 +7,7 @@
 //
 
 #import "MoreRequestSyncViewController.h"
+#import "KSDeferred.h"
 
 #define Url1 @"http://mobile.ximalaya.com/mobile/discovery/v1/recommend/editor?device=iPhone&pageId=1&pageSize=20&position=&title=%E6%9B%B4%E5%A4%9A"
 #define Url2 @"http://mobile.ximalaya.com/mobile/discovery/v2/category/recommends?categoryId=1&contentType=album&device=iPhone&position=&scale=2&title=%E6%9B%B4%E5%A4%9A&version=4.3.38"
@@ -22,8 +23,24 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     [self setTitle:@"多个网络请求的同步问题"];
-    [self loadRequest1];
+    //[self loadRequest1];
     // Do any additional setup after loading the view from its nib.
+    NSMutableArray *dataSource = [NSMutableArray array];
+    [[[self promise1] then:^id _Nullable(id  _Nullable value) {
+        
+        [dataSource addObject:value];
+        return [self promise2];
+        
+    }] then:^id _Nullable(id  _Nullable value) {
+        
+        [dataSource addObject:value];
+        return value;
+        
+    } error:^id _Nullable(NSError * _Nullable error) {
+        
+        NSLog(@"%@",error);
+        return error;
+    }];
 }
 
 #pragma mark - 直接使用dispatch_group
@@ -126,6 +143,57 @@
         NSLog(@"完成");
     });
 }
+
+- (KSPromise<NSNumber *> *)promiseTest
+{
+    KSDeferred *defer = [KSDeferred defer];
+    [[self promise1] then:^id _Nullable(id  _Nullable value) {
+        
+        return value;
+        
+    } error:^id _Nullable(NSError * _Nullable error) {
+        
+        return error;
+    }];
+    return defer.promise;
+}
+
+- (KSPromise<id> *)promise1
+{
+    KSDeferred *defer = [KSDeferred defer];
+    [MALAFNManger getWithUrl:Url1 parameters:nil finish:^(RequestResult *result) {
+        
+        if(result.isSuccess)
+        {
+            [defer resolveWithValue:result.requestData];
+        }
+        else
+        {
+            [defer rejectWithError:[NSError errorWithDomain:@"error1" code:001 userInfo:nil]];
+        }
+        
+    } des:@"第一个url" lifeObj:self];
+    return defer.promise;
+}
+
+- (KSPromise<id> *)promise2
+{
+    KSDeferred *defer = [KSDeferred defer];
+    [MALAFNManger getWithUrl:Url2 parameters:nil finish:^(RequestResult *result) {
+        
+        if(result.isSuccess)
+        {
+            [defer resolveWithValue:result.requestData];
+        }
+        else
+        {
+            [defer rejectWithError:[NSError errorWithDomain:@"error2" code:002 userInfo:nil]];
+        }
+        
+    } des:@"第二个url" lifeObj:self];
+    return defer.promise;
+}
+
 
 - (void)dealloc
 {

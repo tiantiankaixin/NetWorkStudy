@@ -14,11 +14,16 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
+  - KSDeferred (0.3.3)
 
 DEPENDENCIES:
   - AFNetworking (~> 3.1.0)
+  - KSDeferred
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  KSDeferred: 1d90bddfff8b387a49deeb6579e63e170f4f2ce2
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: 640ba031c1c475b7833b2ac30f7b82d30ec3b526
+
+COCOAPODS: 1.2.1
