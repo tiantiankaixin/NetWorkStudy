@@ -26,12 +26,27 @@
     return result;
 }
 
-+ (RequestResult *)resultWithData:(NSData *)data
++ (RequestResult *)resultWithResponse:(id)response
 {
     RequestResult *result = [[RequestResult alloc] init];
-    result.requestData = YNDic(data);
-    result.requestStr = YNStr(data);
-    result.isSuccess = YES;
+    if (response)
+    {
+        result.isSuccess = YES;
+        if ([response isKindOfClass:[NSData class]])
+        {
+            NSData *data = (NSData *)response;
+            result.requestData = YNDic(data);
+            result.requestStr = YNStr(data);
+        }
+        else if ([response isKindOfClass:[NSDictionary class]] || [response isKindOfClass:[NSArray class]])
+        {
+            result.requestData = response;
+        }
+        else
+        {
+            result.isSuccess = NO;
+        }
+    }
     return result;
 }
 

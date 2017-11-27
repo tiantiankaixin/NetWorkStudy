@@ -23,7 +23,7 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     [self setTitle:@"多个网络请求的同步问题"];
-    //[self loadRequest1];
+    [self loadRequest1];
     // Do any additional setup after loading the view from its nib.
     NSMutableArray *dataSource = [NSMutableArray array];
     [[[self promise1] then:^id _Nullable(id  _Nullable value) {

@@ -16,7 +16,7 @@
 @property (nonatomic, strong) id requestData;
 @property (nonatomic, copy)   NSString *requestStr;
 
-+ (RequestResult *)resultWithData:(NSData *)data;
++ (RequestResult *)resultWithResponse:(id)response;
 + (RequestResult *)requestWithError:(NSError *)error;
 + (NSString *)errorDesWithError:(NSError *)error;
 

@@ -53,7 +53,7 @@ static AFHTTPSessionManager *afnManager = nil;
     BOOL uselifeObj = (lifeObj != nil);
     NSURLSessionTask *task = [AFNSessionManager GET:url parameters:pa progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         
-        [self requestSuccessWithData:responseObject Url:url parameters:parameters finish:finish des:des lifeObj:wsObj uselifeObj:uselifeObj];
+        [self requestSuccessWithResponse:responseObject Url:url parameters:parameters finish:finish des:des lifeObj:wsObj uselifeObj:uselifeObj];
         
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         
@@ -69,7 +69,7 @@ static AFHTTPSessionManager *afnManager = nil;
     BOOL uselifeObj = (lifeObj != nil);
     NSURLSessionTask *task = [AFNSessionManager POST:url parameters:pa progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         
-        [self requestSuccessWithData:responseObject Url:url parameters:parameters finish:finish des:des lifeObj:wsObj uselifeObj:uselifeObj];
+        [self requestSuccessWithResponse:responseObject Url:url parameters:parameters finish:finish des:des lifeObj:wsObj uselifeObj:uselifeObj];
         
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         
@@ -118,7 +118,7 @@ static AFHTTPSessionManager *afnManager = nil;
 
 #pragma mark - 请求结果处理
 //访问服务器成功处理
-+ (void)requestSuccessWithData:(NSData *)responseObject Url:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj uselifeObj:(BOOL)uselifeObj
++ (void)requestSuccessWithResponse:(id)response Url:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj uselifeObj:(BOOL)uselifeObj
 {
     NSString *requestFlag = [self fullUrlWithHost:url pa:parameters];
     [self cancelRequestWithFlag:requestFlag];
@@ -126,7 +126,7 @@ static AFHTTPSessionManager *afnManager = nil;
     {
         return;
     }
-    RequestResult *result = [RequestResult resultWithData:responseObject];
+    RequestResult *result = [RequestResult resultWithResponse:response];
     if (finish)
     {
         finish(result);
