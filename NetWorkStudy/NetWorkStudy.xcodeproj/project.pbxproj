@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1A8973F99F7F6C2AFEE3DDA8 /* libPods-NetWorkStudy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EE2C00A30E408094E99F9256 /* libPods-NetWorkStudy.a */; };
+		2085BC91205288FB0033CB33 /* RequestCacheViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2085BC90205288FB0033CB33 /* RequestCacheViewController.m */; };
+		2085BC9720528B900033CB33 /* RequestConfigue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2085BC9620528B900033CB33 /* RequestConfigue.m */; };
 		20DC787E1DFF919C00FB0441 /* AKNetPackegeAFN.m in Sources */ = {isa = PBXBuildFile; fileRef = 20DC787D1DFF919C00FB0441 /* AKNetPackegeAFN.m */; };
 		20E3C19D1DE7E2B40097DCFB /* RequestCancerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20E3C19C1DE7E2B40097DCFB /* RequestCancerViewController.m */; };
 		20E3C1A01DE814AE0097DCFB /* UIViewController+afn.m in Sources */ = {isa = PBXBuildFile; fileRef = 20E3C19F1DE814AE0097DCFB /* UIViewController+afn.m */; };
@@ -43,6 +45,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2085BC8F205288FB0033CB33 /* RequestCacheViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestCacheViewController.h; sourceTree = "<group>"; };
+		2085BC90205288FB0033CB33 /* RequestCacheViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RequestCacheViewController.m; sourceTree = "<group>"; };
+		2085BC9520528B900033CB33 /* RequestConfigue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestConfigue.h; sourceTree = "<group>"; };
+		2085BC9620528B900033CB33 /* RequestConfigue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RequestConfigue.m; sourceTree = "<group>"; };
 		20DC787C1DFF919C00FB0441 /* AKNetPackegeAFN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKNetPackegeAFN.h; sourceTree = "<group>"; };
 		20DC787D1DFF919C00FB0441 /* AKNetPackegeAFN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKNetPackegeAFN.m; sourceTree = "<group>"; };
 		20E3C19B1DE7E2B40097DCFB /* RequestCancerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RequestCancerViewController.h; sourceTree = "<group>"; };
@@ -113,6 +119,15 @@
 				2D7375A03460F15D2FE6B9D3 /* Pods-NetWorkStudy.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		2085BC8E205288870033CB33 /* requestCache */ = {
+			isa = PBXGroup;
+			children = (
+				2085BC8F205288FB0033CB33 /* RequestCacheViewController.h */,
+				2085BC90205288FB0033CB33 /* RequestCacheViewController.m */,
+			);
+			path = requestCache;
 			sourceTree = "<group>";
 		};
 		20DC787B1DFF919C00FB0441 /* AFNHttps自签名证书的封装 */ = {
@@ -222,6 +237,7 @@
 			isa = PBXGroup;
 			children = (
 				68739C461CC8B57E009C6840 /* mainPage */,
+				2085BC8E205288870033CB33 /* requestCache */,
 				68739C381CC8780D009C6840 /* moreRequestSync */,
 				20E3C19A1DE7E0400097DCFB /* requestCancer */,
 			);
@@ -246,6 +262,8 @@
 				68739C421CC87C61009C6840 /* RequestResult.m */,
 				20E3C19E1DE814AE0097DCFB /* UIViewController+afn.h */,
 				20E3C19F1DE814AE0097DCFB /* UIViewController+afn.m */,
+				2085BC9520528B900033CB33 /* RequestConfigue.h */,
+				2085BC9620528B900033CB33 /* RequestConfigue.m */,
 			);
 			path = AFNManger;
 			sourceTree = "<group>";
@@ -407,7 +425,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		8024286DCFBEE6716BBCBAE9 /* [CP] Copy Pods Resources */ = {
@@ -450,10 +468,12 @@
 				68739C331CC863E4009C6840 /* MenuTemplateVC.m in Sources */,
 				68739C441CC87C61009C6840 /* RequestResult.m in Sources */,
 				68739C3C1CC87939009C6840 /* MoreRequestSyncViewController.m in Sources */,
+				2085BC9720528B900033CB33 /* RequestConfigue.m in Sources */,
 				20DC787E1DFF919C00FB0441 /* AKNetPackegeAFN.m in Sources */,
 				68739C011CC86264009C6840 /* AppDelegate.m in Sources */,
 				20E3C1A01DE814AE0097DCFB /* UIViewController+afn.m in Sources */,
 				68739C491CC8B5A6009C6840 /* MainPageViewController.m in Sources */,
+				2085BC91205288FB0033CB33 /* RequestCacheViewController.m in Sources */,
 				68739C431CC87C61009C6840 /* MALAFNManger.m in Sources */,
 				20E3C19D1DE7E2B40097DCFB /* RequestCancerViewController.m in Sources */,
 				68739C361CC86531009C6840 /* MenuTemplateModel.m in Sources */,

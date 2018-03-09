@@ -45,6 +45,7 @@
         else
         {
             result.isSuccess = NO;
+            result.errorDes = @"返回结果非json格式";
         }
     }
     return result;

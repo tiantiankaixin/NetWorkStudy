@@ -7,6 +7,7 @@
 //
 
 #import "MALAFNManger.h"
+#import "RequestConfigue.h"
 
 #define AFNRequestTimeout  5
 #define AFNSessionManager  [self afnSessionManager]
@@ -26,6 +27,7 @@ static AFHTTPSessionManager *afnManager = nil;
     if (afnManager == nil)
     {
         afnManager = [self sessionManagerWithTimeOut:AFNRequestTimeout isJson:NO];
+        [[RequestConfigue shareConfigue] configue];
     }
     return afnManager;
 }
@@ -45,8 +47,8 @@ static AFHTTPSessionManager *afnManager = nil;
     return session;
 }
 
-#pragma mark - get request
-+ (NSString *)getWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj
+#pragma mark - request function
++ (NSString *)getWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj useCache:(BOOL)useCache
 {
     NSMutableDictionary *pa = [self addPublicParameters:parameters];
     __weak typeof(lifeObj) wsObj = lifeObj;
@@ -60,6 +62,16 @@ static AFHTTPSessionManager *afnManager = nil;
         [self requestErrorWithUrl:url parameters:parameters finish:finish des:des error:error lifeObj:wsObj uselifeObj:uselifeObj];
     }];
     return [self saveTaskWithUrl:url pa:parameters task:task];
+}
+
++ (NSString *)getWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj
+{
+    return [self getWithUrl:url parameters:parameters finish:finish des:des lifeObj:lifeObj useCache:NO];
+}
+
++ (NSString *)getWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des useCache:(BOOL)useCache
+{
+    return [self getWithUrl:url parameters:parameters finish:finish des:des lifeObj:nil useCache:useCache];
 }
 
 + (NSString *)postWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj

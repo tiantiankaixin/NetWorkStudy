@@ -15,8 +15,9 @@ typedef void(^FinishBlock)(RequestResult *result);
 @interface MALAFNManger : NSObject
 
 + (NSString *)getWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj;
++ (NSString *)getWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des useCache:(BOOL)useCache;
 + (NSString *)postWithUrl:(NSString *)url parameters:(NSDictionary *)parameters finish:(FinishBlock)finish des:(NSString *)des lifeObj:(id)lifeObj;
-
 + (void)cancelRequestWithFlag:(NSString *)flag;
+
 
 @end
